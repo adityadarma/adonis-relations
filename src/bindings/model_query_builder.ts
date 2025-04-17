@@ -1,50 +1,23 @@
-import { ModelQueryBuilder } from '@adonisjs/lucid/orm'
-import { LucidRow, WithRelation } from '@adonisjs/lucid/types/model'
+import {
+  LucidModel,
+  LucidRow,
+  ModelQueryBuilderContract,
+  WithRelation,
+} from '@adonisjs/lucid/types/model'
+import { ExtractModelRelations } from '@adonisjs/lucid/types/relations'
 
 export function extendModelQueryBuilder(builder: any) {
-  builder.macro('withRelation', function <
+  builder.macro('relation', function <
     T extends LucidRow,
-  >(this: ModelQueryBuilder, relations: WithRelation<T>) {
+  >(this: ModelQueryBuilderContract<LucidModel>, relations: WithRelation<T>) {
     const listRelations = Array.isArray(relations) ? relations : [relations]
-
-    function preloadRecursiveWithColumn(
-      query: ModelQueryBuilder,
-      relationPath: string[],
-      columns: string[]
-    ) {
-      const [current, ...rest] = relationPath
-
-      query.preload(current, (nestedQuery: any) => {
-        if (rest.length > 0) {
-          preloadRecursiveWithColumn(nestedQuery, rest, columns)
-        } else if (columns.length > 0) {
-          nestedQuery.select(columns)
-        }
-      })
-    }
-
-    function preloadRecursiveWithCallback(
-      query: ModelQueryBuilder,
-      relationPath: string[],
-      callback: any
-    ) {
-      const [current, ...rest] = relationPath
-
-      if (rest.length > 0) {
-        query.preload(current, (nestedQuery: any) => {
-          preloadRecursiveWithCallback(nestedQuery, rest, callback)
-        })
-      } else {
-        query.preload(current, callback)
-      }
-    }
 
     for (const relation of listRelations) {
       // If string
       if (typeof relation === 'string') {
-        const [modelRelation, columnString] = relation.split(':')
-        const modelRelations = modelRelation.split('.')
-        const columns = columnString?.split(',') ?? ['*']
+        const [modelRelation, columnSelected] = relation.split(':')
+        const modelRelations: string[] = modelRelation.split('.')
+        const columns = columnSelected?.split(',') ?? ['*']
 
         preloadRecursiveWithColumn(this, modelRelations, columns)
       }
@@ -61,4 +34,38 @@ export function extendModelQueryBuilder(builder: any) {
 
     return this
   })
+}
+
+function preloadRecursiveWithColumn(
+  query: ModelQueryBuilderContract<LucidModel>,
+  relationPath: string[],
+  columns: string[]
+) {
+  const [current, ...rest] = relationPath
+  const relationship = current as unknown as ExtractModelRelations<LucidRow>
+
+  query.preload(relationship, (nestedQuery: any) => {
+    if (rest.length > 0) {
+      preloadRecursiveWithColumn(nestedQuery, rest, columns)
+    } else if (columns.length > 0) {
+      nestedQuery.select(columns)
+    }
+  })
+}
+
+function preloadRecursiveWithCallback(
+  query: ModelQueryBuilderContract<LucidModel>,
+  relationPath: string[],
+  callback: any
+) {
+  const [current, ...rest] = relationPath
+  const relationship = current as unknown as ExtractModelRelations<LucidRow>
+
+  if (rest.length > 0) {
+    query.preload(relationship, (nestedQuery: any) => {
+      preloadRecursiveWithCallback(nestedQuery, rest, callback)
+    })
+  } else {
+    query.preload(relationship, callback)
+  }
 }
