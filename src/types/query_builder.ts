@@ -1,35 +1,17 @@
-import { LucidRow, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import { ExtractModelRelations } from '@adonisjs/lucid/types/relations'
-import {
-  ChainableContract,
-  ExcutableQueryBuilderContract,
-} from '@adonisjs/lucid/types/querybuilder'
-
-declare module '@adonisjs/lucid/orm' {
-  export interface ModelQueryBuilder {
-    withRelation(relations: WithRelation<LucidRow>): this
-  }
-}
 
 declare module '@adonisjs/lucid/types/model' {
-  export interface ModelQueryBuilderContract<Model extends LucidModel, Result = InstanceType<Model>>
-    extends ChainableContract,
-      ExcutableQueryBuilderContract<Result[]> {
-    withRelation: <Relation extends WithRelation<InstanceType<Model>>>(relations: Relation) => this
-  }
-}
-
-type InferRelationModel<T, K extends keyof T> = T[K] extends LucidRow[]
+  type InferRelationModel<T, K extends keyof T> = T[K] extends LucidRow[]
   ? T[K][number]
   : T[K] extends LucidRow
     ? T[K]
     : never
 
-type HasRelation<T extends LucidRow> = ExtractModelRelations<T> extends never ? false : true
+  type HasRelation<T extends LucidRow> = ExtractModelRelations<T> extends never ? false : true
 
-type Prev = [never, 0, 1, 2, 3, 4]
+  type Prev = [never, 0, 1, 2, 3, 4]
 
-type NestedRelationCallback<T extends LucidRow, D extends number> = [D] extends [never]
+  type NestedRelationCallback<T extends LucidRow, D extends number> = [D] extends [never]
   ? never
   : {
       [K in ExtractModelRelations<T> & string]:
@@ -39,11 +21,11 @@ type NestedRelationCallback<T extends LucidRow, D extends number> = [D] extends 
             : never)
     }[ExtractModelRelations<T> & string]
 
-type WithRelationObject<T extends LucidRow, D extends number> = {
+  type WithRelationObject<T extends LucidRow, D extends number> = {
   [K in NestedRelationCallback<T, D> & string]?: (query: ModelQueryBuilderContract<any>) => void
-}
+  }
 
-type NestedRelation<T extends LucidRow, D extends number> = [D] extends [never]
+  type NestedRelation<T extends LucidRow, D extends number> = [D] extends [never]
   ? never
   : {
       [K in ExtractModelRelations<T> & string]:
@@ -55,4 +37,12 @@ type NestedRelation<T extends LucidRow, D extends number> = [D] extends [never]
         | WithRelationObject<T, D>
     }[ExtractModelRelations<T> & string]
 
-export type WithRelation<T extends LucidRow, D extends number = 4> = NestedRelation<T, D>[]
+  export type WithRelation<T extends LucidRow, D extends number = 4> = NestedRelation<T, D>[]
+  
+  export interface ModelQueryBuilderContract<
+    Model extends LucidModel,
+    Result = InstanceType<Model>,
+  > {
+    withRelation: <Relation extends WithRelation<InstanceType<Model>>>(relations: Relation) => this
+  }
+}

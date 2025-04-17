@@ -1,6 +1,5 @@
 import { ModelQueryBuilder } from '@adonisjs/lucid/orm'
-import { LucidRow } from '@adonisjs/lucid/types/model'
-import { WithRelation } from '../types/query_builder.js'
+import { LucidRow, WithRelation } from '@adonisjs/lucid/types/model'
 
 export function extendModelQueryBuilder(builder: any) {
   builder.macro('withRelation', function <
