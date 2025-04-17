@@ -6,13 +6,13 @@ import {
 } from '@adonisjs/lucid/types/querybuilder'
 
 declare module '@adonisjs/lucid/orm' {
-  interface ModelQueryBuilder {
+  export interface ModelQueryBuilder {
     withRelation(relations: WithRelation<LucidRow>): this
   }
 }
 
 declare module '@adonisjs/lucid/types/model' {
-  interface ModelQueryBuilderContract<Model extends LucidModel, Result = InstanceType<Model>>
+  export interface ModelQueryBuilderContract<Model extends LucidModel, Result = InstanceType<Model>>
     extends ChainableContract,
       ExcutableQueryBuilderContract<Result[]> {
     withRelation: <Relation extends WithRelation<InstanceType<Model>>>(relations: Relation) => this
