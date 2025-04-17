@@ -10,7 +10,9 @@
     "build/src",
     "build/providers",
     "build/index.d.ts",
-    "build/index.js"
+    "build/index.js",
+    "build/configure.d.ts",
+    "build/configure.js"
   ],
   "exports": {
     ".": "./build/index.js",

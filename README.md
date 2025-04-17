@@ -12,15 +12,16 @@ node ace add @adityadarma/adonis-relations
 
 ## Usage
 
-
 ```ts
 await User.query().withRelation([
   'relationName:id,name',
   'relationName.relationName2:id,name',
   'relationName.relationName2.relationName3.relationName4',
-  {'relationName.relationName2': function(query: any) {
-    query.select('*')
-  }}
+  {
+    'relationName.relationName2': function (query: any) {
+      query.select('*')
+    },
+  },
 ])
 ```
 
