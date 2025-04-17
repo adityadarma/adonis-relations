@@ -1,4 +1,5 @@
 import type { ApplicationService } from '@adonisjs/core/types'
+import { extendModelQueryBuilder } from '../src/bindings/model_query_builder.js'
 
 export default class RelationsProvider {
   constructor(protected app: ApplicationService) {}
@@ -12,7 +13,8 @@ export default class RelationsProvider {
    * The container bindings have booted
    */
   async boot() {
-    await import('../src/extensions.js')
+    const { ModelQueryBuilder } = await this.app.import('@adonisjs/lucid/orm')
+    extendModelQueryBuilder(ModelQueryBuilder)
   }
 
   /**

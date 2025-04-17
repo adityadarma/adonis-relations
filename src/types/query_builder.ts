@@ -1,5 +1,23 @@
 import { LucidRow, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import { ExtractModelRelations } from '@adonisjs/lucid/types/relations'
+import {
+  ChainableContract,
+  ExcutableQueryBuilderContract,
+} from '@adonisjs/lucid/types/querybuilder'
+
+declare module '@adonisjs/lucid/orm' {
+  interface ModelQueryBuilder {
+    withRelation(relations: WithRelation<LucidRow>): this
+  }
+}
+
+declare module '@adonisjs/lucid/types/model' {
+  interface ModelQueryBuilderContract<Model extends LucidModel, Result = InstanceType<Model>>
+    extends ChainableContract,
+      ExcutableQueryBuilderContract<Result[]> {
+    withRelation: <Relation extends WithRelation<InstanceType<Model>>>(relations: Relation) => this
+  }
+}
 
 type InferRelationModel<T, K extends keyof T> = T[K] extends LucidRow[]
   ? T[K][number]
