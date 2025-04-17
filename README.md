@@ -1,4 +1,4 @@
-# Adonis Relationship Nested
+# Adonis Nested Relationship
 
 [![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] [![npm-downloads]][npm-downloads] ![][typescript-image] [![license-image]][license-url]
 

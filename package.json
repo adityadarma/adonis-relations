@@ -37,7 +37,7 @@
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
     "@adonisjs/core": "^6.15.0",
-    "@adonisjs/eslint-config": "2.0.0-beta.7",
+    "@adonisjs/eslint-config": "^2.0.0-beta.7",
     "@adonisjs/prettier-config": "^1.4.0",
     "@adonisjs/tsconfig": "^1.4.0",
     "@japa/assert": "^3.0.0",
@@ -73,7 +73,8 @@
   },
   "publishConfig": {
     "access": "public",
-    "tag": "latest"
+    "tag": "latest",
+    "provenance": true
   },
   "release-it": {
     "git": {
@@ -83,6 +84,9 @@
       "tagAnnotation": "v${version}",
       "push": true,
       "tagName": "v${version}"
+    },
+    "github": {
+      "release": true
     },
     "npm": {
       "publish": true,
