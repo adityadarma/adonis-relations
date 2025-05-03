@@ -1,34 +1,32 @@
 import type { ApplicationService } from '@adonisjs/core/types'
-import { extendModelQueryBuilder } from '../src/bindings/model_query_builder.js'
+import { ModelQueryBuilder } from '@adonisjs/lucid/orm'
+import { LucidRow } from '@adonisjs/lucid/types/model'
+import { Relations } from '../src/types.js'
 
 export default class RelationsProvider {
   constructor(protected app: ApplicationService) {}
 
   /**
-   * Register bindings to the container
-   */
-  register() {}
-
-  /**
    * The container bindings have booted
    */
   async boot() {
-    const { ModelQueryBuilder } = await this.app.import('@adonisjs/lucid/orm')
+    const { extendModelQueryBuilder } = await import('../src/bindings/model_query_builder.js')
+
     extendModelQueryBuilder(ModelQueryBuilder)
   }
+}
 
-  /**
-   * The application has been booted
-   */
-  async start() {}
+declare module '@adonisjs/lucid/orm' {
+  interface ModelQueryBuilder {
+    relations<Relation extends Relations<LucidRow>>(relations: Relation): this
+  }
+}
 
-  /**
-   * The process has been started
-   */
-  async ready() {}
-
-  /**
-   * Preparing to shut down the app
-   */
-  async shutdown() {}
+declare module '@adonisjs/lucid/types/model' {
+  export interface ModelQueryBuilderContract<
+    Model extends LucidModel,
+    Result = InstanceType<Model>,
+  > {
+    relations: <Relation extends Relations<InstanceType<Model>>>(relations: Relation) => this
+  }
 }

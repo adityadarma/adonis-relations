@@ -1,15 +1,12 @@
-import {
-  LucidModel,
-  LucidRow,
-  ModelQueryBuilderContract,
-  WithRelation,
-} from '@adonisjs/lucid/types/model'
+import { ModelQueryBuilder } from '@adonisjs/lucid/orm'
+import { LucidModel, LucidRow, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import { ExtractModelRelations } from '@adonisjs/lucid/types/relations'
+import { Relations } from '../types.js'
 
-export function extendModelQueryBuilder(builder: any) {
-  builder.macro('relation', function <
+export function extendModelQueryBuilder(builder: typeof ModelQueryBuilder) {
+  builder.macro('relations', function <
     T extends LucidRow,
-  >(this: ModelQueryBuilderContract<LucidModel>, relations: WithRelation<T>) {
+  >(this: ModelQueryBuilder, relations: Relations<T>) {
     const listRelations = Array.isArray(relations) ? relations : [relations]
 
     for (const relation of listRelations) {

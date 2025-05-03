@@ -13,7 +13,7 @@ node ace add @adityadarma/adonis-relations
 ## Usage
 
 ```ts
-await User.query().withRelation([
+await User.query().relations([
   'relationName:id,name',
   'relationName.relationName2:id,name',
   'relationName.relationName2.relationName3.relationName4',
