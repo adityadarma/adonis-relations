@@ -29,7 +29,7 @@ type NestedRelation<T extends LucidRow, D extends number> = [D] extends [never]
   ? never
   : {
       [K in ExtractModelRelations<T> & string]:
-        | `${K}`
+        | K
         | `${K}:${string}`
         | (HasRelation<InferRelationModel<T, K>> extends true
             ? `${K}.${NestedRelation<InferRelationModel<T, K>, Prev[D]> & string}`

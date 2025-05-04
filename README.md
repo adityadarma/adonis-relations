@@ -13,6 +13,7 @@ node ace add @adityadarma/adonis-relations
 ## Usage
 
 ```ts
+// after : is column name, you can add with camelCase or snake_case
 await User.query().relations([
   'relationName:id,name',
   'relationName.relationName2:id,name',

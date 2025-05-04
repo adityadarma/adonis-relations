@@ -1,6 +1,7 @@
 import { ModelQueryBuilder } from '@adonisjs/lucid/orm'
 import { LucidModel, LucidRow, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import { ExtractModelRelations } from '@adonisjs/lucid/types/relations'
+import string from '@adonisjs/core/helpers/string'
 import { Relations } from '../types.js'
 
 export function extendModelQueryBuilder(builder: typeof ModelQueryBuilder) {
@@ -45,7 +46,9 @@ function preloadRecursiveWithColumn(
     if (rest.length > 0) {
       preloadRecursiveWithColumn(nestedQuery, rest, columns)
     } else if (columns.length > 0) {
-      nestedQuery.select(columns)
+      nestedQuery.select(
+        columns.map((column) => string.condenseWhitespace(string.snakeCase(column)))
+      )
     }
   })
 }
