@@ -1,5 +1,5 @@
 import { ModelQueryBuilder } from '@adonisjs/lucid/orm'
-import { LucidModel, LucidRow, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
+import { LucidRow } from '@adonisjs/lucid/types/model'
 import { ExtractModelRelations } from '@adonisjs/lucid/types/relations'
 import string from '@adonisjs/core/helpers/string'
 import { Relations } from '../types.js'
@@ -35,7 +35,7 @@ export function extendModelQueryBuilder(builder: typeof ModelQueryBuilder) {
 }
 
 function preloadRecursiveWithColumn(
-  query: ModelQueryBuilderContract<LucidModel>,
+  query: ModelQueryBuilder,
   relationPath: string[],
   columns: string[]
 ) {
@@ -54,7 +54,7 @@ function preloadRecursiveWithColumn(
 }
 
 function preloadRecursiveWithCallback(
-  query: ModelQueryBuilderContract<LucidModel>,
+  query: ModelQueryBuilder,
   relationPath: string[],
   callback: any
 ) {

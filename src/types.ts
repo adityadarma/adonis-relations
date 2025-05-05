@@ -1,4 +1,5 @@
-import { LucidRow, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
+import { ModelQueryBuilder } from '@adonisjs/lucid/orm'
+import { LucidRow } from '@adonisjs/lucid/types/model'
 import { ExtractModelRelations } from '@adonisjs/lucid/types/relations'
 
 type InferRelationModel<T, K extends keyof T> = T[K] extends LucidRow[]
@@ -22,7 +23,7 @@ type NestedRelationCallback<T extends LucidRow, D extends number> = [D] extends 
     }[ExtractModelRelations<T> & string]
 
 type RelationObject<T extends LucidRow, D extends number> = {
-  [K in NestedRelationCallback<T, D> & string]?: (query: ModelQueryBuilderContract<any>) => void
+  [K in NestedRelationCallback<T, D> & string]?: (query: ModelQueryBuilder) => void
 }
 
 type NestedRelation<T extends LucidRow, D extends number> = [D] extends [never]
