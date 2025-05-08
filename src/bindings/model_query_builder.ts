@@ -1,17 +1,16 @@
-import { ModelQueryBuilder } from '@adonisjs/lucid/orm'
-import { LucidRow } from '@adonisjs/lucid/types/model'
+import { LucidModel, LucidRow, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import { ExtractModelRelations } from '@adonisjs/lucid/types/relations'
 import string from '@adonisjs/core/helpers/string'
 import { Relations } from '../types.js'
 
-export function extendModelQueryBuilder(builder: typeof ModelQueryBuilder) {
+export function extendModelQueryBuilder(builder: any) {
   builder.macro('relations', function <
     T extends LucidRow,
-  >(this: ModelQueryBuilder, relations: Relations<T>) {
+  >(this: ModelQueryBuilderContract<LucidModel>, relations: Relations<T>) {
     const listRelations = Array.isArray(relations) ? relations : [relations]
 
     for (const relation of listRelations) {
-      // If string
+      // If string relation in array
       if (typeof relation === 'string') {
         const [modelRelation, columnSelected] = relation.split(':')
         const modelRelations: string[] = modelRelation.split('.')
@@ -20,7 +19,7 @@ export function extendModelQueryBuilder(builder: typeof ModelQueryBuilder) {
         preloadRecursiveWithColumn(this, modelRelations, columns)
       }
 
-      // If object { relation: callback }
+      // If object { relation: callback } in array
       else if (typeof relation === 'object' && !Array.isArray(relation)) {
         for (const key in relation as Record<string, any>) {
           const modelRelations = key.split('.')
@@ -35,7 +34,7 @@ export function extendModelQueryBuilder(builder: typeof ModelQueryBuilder) {
 }
 
 function preloadRecursiveWithColumn(
-  query: ModelQueryBuilder,
+  query: ModelQueryBuilderContract<LucidModel>,
   relationPath: string[],
   columns: string[]
 ) {
@@ -54,7 +53,7 @@ function preloadRecursiveWithColumn(
 }
 
 function preloadRecursiveWithCallback(
-  query: ModelQueryBuilder,
+  query: ModelQueryBuilderContract<LucidModel>,
   relationPath: string[],
   callback: any
 ) {

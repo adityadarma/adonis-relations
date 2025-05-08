@@ -19,7 +19,7 @@ await User.query().relations([
   'relationName.relationName2:id,name',
   'relationName.relationName2.relationName3.relationName4',
   {
-    'relationName.relationName2': function (query: any) {
+    'relationName': function (query) {
       query.select('*')
     },
   },

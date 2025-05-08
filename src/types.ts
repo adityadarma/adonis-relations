@@ -1,6 +1,5 @@
-import { ModelQueryBuilder } from '@adonisjs/lucid/orm'
-import { LucidRow } from '@adonisjs/lucid/types/model'
-import { ExtractModelRelations } from '@adonisjs/lucid/types/relations'
+import { LucidModel, LucidRow } from '@adonisjs/lucid/types/model'
+import { ExtractModelRelations, ModelRelations } from '@adonisjs/lucid/types/relations'
 
 type InferRelationModel<T, K extends keyof T> = T[K] extends LucidRow[]
   ? T[K][number]
@@ -10,20 +9,10 @@ type InferRelationModel<T, K extends keyof T> = T[K] extends LucidRow[]
 
 type HasRelation<T extends LucidRow> = ExtractModelRelations<T> extends never ? false : true
 
-type Prev = [never, 0, 1, 2, 3, 4]
-
-type NestedRelationCallback<T extends LucidRow, D extends number> = [D] extends [never]
-  ? never
-  : {
-      [K in ExtractModelRelations<T> & string]:
-        | `${K}`
-        | (HasRelation<InferRelationModel<T, K>> extends true
-            ? `${K}.${NestedRelationCallback<InferRelationModel<T, K>, Prev[D]> & string}`
-            : never)
-    }[ExtractModelRelations<T> & string]
-
-type RelationObject<T extends LucidRow, D extends number> = {
-  [K in NestedRelationCallback<T, D> & string]?: (query: ModelQueryBuilder) => void
+type RelationObject<T extends LucidRow> = {
+  [K in ExtractModelRelations<T> & string & string]?: (
+    query: T[K] extends ModelRelations<LucidModel, LucidModel> ? T[K]['builder'] : never
+  ) => void | undefined
 }
 
 type NestedRelation<T extends LucidRow, D extends number> = [D] extends [never]
@@ -33,9 +22,9 @@ type NestedRelation<T extends LucidRow, D extends number> = [D] extends [never]
         | K
         | `${K}:${string}`
         | (HasRelation<InferRelationModel<T, K>> extends true
-            ? `${K}.${NestedRelation<InferRelationModel<T, K>, Prev[D]> & string}`
+            ? `${K}.${NestedRelation<InferRelationModel<T, K>, [never, 0, 1, 2, 3, 4][D]> & string}`
             : never)
-        | RelationObject<T, D>
+        | RelationObject<T>
     }[ExtractModelRelations<T> & string]
 
 export type Relations<T extends LucidRow, D extends number = 4> = NestedRelation<T, D>[]

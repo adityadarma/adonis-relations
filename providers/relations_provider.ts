@@ -1,6 +1,5 @@
 import type { ApplicationService } from '@adonisjs/core/types'
 import { ModelQueryBuilder } from '@adonisjs/lucid/orm'
-import { LucidRow } from '@adonisjs/lucid/types/model'
 import { Relations } from '../src/types.js'
 
 export default class RelationsProvider {
@@ -18,15 +17,12 @@ export default class RelationsProvider {
 
 declare module '@adonisjs/lucid/orm' {
   interface ModelQueryBuilder {
-    relations<Relation extends Relations<LucidRow>>(relations: Relation): this
+    relations(relations: any): this
   }
 }
 
 declare module '@adonisjs/lucid/types/model' {
-  export interface ModelQueryBuilderContract<
-    Model extends LucidModel,
-    Result = InstanceType<Model>,
-  > {
+  export interface ModelQueryBuilderContract<Model extends LucidModel> {
     relations: <Relation extends Relations<InstanceType<Model>>>(relations: Relation) => this
   }
 }
