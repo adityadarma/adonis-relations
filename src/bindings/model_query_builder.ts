@@ -14,7 +14,7 @@ export function extendModelQueryBuilder(builder: any) {
       if (typeof relation === 'string') {
         const [modelRelation, columnSelected] = relation.split(':')
         const modelRelations: string[] = modelRelation.split('.')
-        const columns = columnSelected?.split(',') ?? ['*']
+        const columns = columnSelected?.split(',') ?? []
 
         preloadRecursiveWithColumn(this, modelRelations, columns)
       }
@@ -41,15 +41,21 @@ function preloadRecursiveWithColumn(
   const [current, ...rest] = relationPath
   const relationship = current as unknown as ExtractModelRelations<LucidRow>
 
-  query.preload(relationship, (nestedQuery: any) => {
-    if (rest.length > 0) {
+  if (rest.length > 0) {
+    query.preload(relationship, (nestedQuery: any) => {
       preloadRecursiveWithColumn(nestedQuery, rest, columns)
-    } else if (columns.length > 0) {
-      nestedQuery.select(
-        columns.map((column) => string.condenseWhitespace(string.snakeCase(column)))
-      )
+    })
+  } else {
+    if (columns.length > 0) {
+      query.preload(relationship, (nestedQuery: any) => {
+        nestedQuery.select(
+          columns.map((column) => string.condenseWhitespace(string.snakeCase(column)))
+        )
+      })
+    } else {
+      query.preload(relationship)
     }
-  })
+  }
 }
 
 function preloadRecursiveWithCallback(
